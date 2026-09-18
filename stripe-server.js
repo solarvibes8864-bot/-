@@ -61,8 +61,7 @@ async function createCheckout(req,res){
   if(!priceId) return send(res,400,{error:'缺少 '+cur+' 的 Price ID（請設定 STRIPE_'+kind.toUpperCase()+'_PRICE_ID_'+cur+'）'});
   try{
     const subData = { trial_period_days:CONFIG.trialDays, metadata:{user:user||'anon', plan:kind, currency:cur} }; // 首月免費試用
-    if(kind==='yearly') subData.cancel_at = Math.floor(Date.now()/1000) + (CONFIG.trialDays + 365)*86400; // 年方案：按月付款 12 期後自動結束，不無限續訂
-    const session = await client.checkout.sessions.create({
+    const sessParams = {
       mode:'subscription',
       client_reference_id: user || 'anon',
       line_items:[{price:priceId, quantity:1}],
@@ -70,7 +69,9 @@ async function createCheckout(req,res){
       allow_promotion_codes:true,
       success_url: CONFIG.appUrl + '?checkout=success&user=' + encodeURIComponent(user||'anon') + '&plan=' + encodeURIComponent(plan),
       cancel_url: CONFIG.appUrl,
-    });
+    };
+    if(kind==='yearly') sessParams.cancel_at = Math.floor(Date.now()/1000) + (CONFIG.trialDays + 365)*86400; // 年方案：月繳 12 期後自動結束（Stripe 在 cancel_at 時自動停訂）
+    const session = await client.checkout.sessions.create(sessParams);
     send(res,200,{url:session.url});
   }catch(e){ send(res,500,{error:e.message}); }
 }
