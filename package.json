@@ -1,0 +1,12 @@
+{
+  "name": "mingming-planet",
+  "version": "1.0.0",
+  "private": true,
+  "main": "stripe-server.js",
+  "scripts": {
+    "start": "node stripe-server.js"
+  },
+  "dependencies": {
+    "stripe": "^22.6.2"
+  }
+}

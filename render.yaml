@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: mingming-planet
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node stripe-server.js
+    envVars:
+      - key: STRIPE_SECRET_KEY
+        sync: false            # 部署時在介面貼 Roll 後的新 sk_live_（唯一要手填的）
+      - key: STRIPE_MONTHLY_PRICE_ID_TWD
+        value: price_1UGhPWKYKVfreTFBmMuJZpFl   # 月訂閱 台幣 NT$95/月
+      - key: STRIPE_YEARLY_PRICE_ID_TWD
+        value: price_1UGv2aKYKVfreTFB5sy5nDm9    # 年訂閱 台幣 NT$60/月×12期
+      - key: STRIPE_MONTHLY_PRICE_ID_HKD
+        value: price_1UGuzSKYKVfreTFBbvGqwt2g   # 月訂閱 港幣 HK$24/月
+      - key: STRIPE_YEARLY_PRICE_ID_HKD
+        value: price_1UGv2aKYKVfreTFBSOX7Mz56   # 年訂閱 港幣 HK$15/月×12期
+      - key: STRIPE_TRIAL_DAYS
+        value: "30"
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false            # 加完 webhook 後回來填
